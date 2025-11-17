@@ -7,20 +7,26 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// רשימת הדומיינים שמורשים לשלוח בקשות
 const allowedOrigins = [
-  'http://localhost:3000', // לפיתוח מקומי
-  'https://superb-daifuku-81e0a8.netlify.app',
-  'https://cerulean-khapse-bd44a4.netlify.app',
-  'https://effulgent-lolly-3a011d.netlify.app'
+  'http://localhost:3000',
+  'https://superb-daifuku-81e0a8.netlify.app', // הכתובת שלך ב-Netlify
+  'https://cerulean-khapse-bd44a4.netlify.app', // אם יש עוד אתרים
 ];
 
 app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); // מאפשר requests מ־Postman / curl
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
-;
+
+
 
 app.use(express.json());
 
