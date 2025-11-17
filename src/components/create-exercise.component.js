@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
 // כתובת ה-API הבסיסית
-const API_URL = 'https://exercise-tracker-1-lf7s.onrender.com';
+const API_URL = 'https://exercise-tracker-1-lf7s.onrender.com/';
 
 export default function CreateExercise() {
   const [username, setUsername] = useState('');
@@ -16,7 +16,7 @@ export default function CreateExercise() {
 
   useEffect(() => {
     // *** תיקון כאן: הוספנו לוכסן אחרי שם הדומיין ***
-    axios.get(API_URL + '/users/')
+    axios.get(API_URL + 'users/')
       .then(response => {
         // אם יש נתונים, שים אותם במערך ובחר את הראשון
         if (response.data && response.data.length > 0) {
