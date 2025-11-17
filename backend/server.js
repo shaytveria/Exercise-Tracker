@@ -10,7 +10,8 @@ const port = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:3000',
   'https://superb-daifuku-81e0a8.netlify.app', // הכתובת שלך ב-Netlify
-  'https://cerulean-khapse-bd44a4.netlify.app', // אם יש עוד אתרים
+  'https://cerulean-khapse-bd44a4.netlify.app',
+  'https://dapper-daffodil-0799fc.netlify.app' // אם יש עוד אתרים
 ];
 
 app.use(cors({
