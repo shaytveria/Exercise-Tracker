@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 export default function CreateUser() {
   const [username, setUsername] = useState('');
@@ -27,7 +28,7 @@ export default function CreateUser() {
 
     try {
       const user = { username };
-      const res = await axios.post('/users/add', user);
+      const res = await axios.post(`${API_URL}/users/add`, user);
       setSuccess(`User "${username}" created successfully!`);
       setUsername('');
     } catch (err) {

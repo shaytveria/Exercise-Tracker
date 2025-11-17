@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 export default function EditExercise() {
   const [username, setUsername] = useState('');
@@ -15,7 +16,7 @@ export default function EditExercise() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('https://exercise-tracker-1-lf7s.onrender.com/exercises' + id)
+    axios.get(`${API_URL}/exercises/${id}`)
       .then(response => {
         setUsername(response.data.username);
         setDescription(response.data.description);
@@ -24,7 +25,7 @@ export default function EditExercise() {
       })
       .catch(error => console.log(error));
 
-    axios.get('https://exercise-tracker-1-lf7s.onrender.com/users/')
+    axios.get(`${API_URL}/users/`)
       .then(response => {
         if (response.data.length > 0) {
           setUsers(response.data.map(user => user.username));
@@ -38,7 +39,7 @@ export default function EditExercise() {
 
     const exercise = { username, description, duration, date };
 
-    axios.post('http://localhost:5000/exercises/update/' + id, exercise)
+    axios.post(`${API_URL}/exercises/update/${id}`, exercise)
       .then(res => {
         console.log(res.data);
         navigate('/');
@@ -47,7 +48,7 @@ export default function EditExercise() {
   };
 
   const onDelete = () => {
-    axios.delete('http://localhost:5000/exercises/' + id)
+    axios.delete(`${API_URL}/exercises/${id}`)
       .then(res => {
         console.log('Deleted:', res.data);
         navigate('/');

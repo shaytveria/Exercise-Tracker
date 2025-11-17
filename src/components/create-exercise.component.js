@@ -63,7 +63,7 @@ export default function CreateExercise() {
 
     console.log(exercise);
 
-    axios.post('https://exercise-tracker-1-lf7s.onrender.com/exercisesadd', exercise)
+    axios.post('https://exercise-tracker-1-lf7s.onrender.com/exercises/add', exercise)
       .then(res => {
         console.log(res.data);
         window.location = '/';

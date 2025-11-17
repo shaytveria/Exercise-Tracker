@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { API_URL } from '../config';
 
 const ExerciseCard = ({ exercise, deleteExercise }) => (
   <div className="card mb-3 shadow-sm">
@@ -35,7 +36,7 @@ export default class ExercisesList extends Component {
 
   componentDidMount() {
     axios
-      .get('https://exercise-tracker-1-lf7s.onrender.com/exercises/')
+      .get(`${API_URL}/exercises/`)
       .then((response) => {
         this.setState({ exercises: response.data });
       })
@@ -46,7 +47,7 @@ export default class ExercisesList extends Component {
 
   deleteExercise(id) {
     axios
-      .delete('https://exercise-tracker-1-lf7s.onrender.com/exercises' + id)
+      .delete(`${API_URL}/exercises/${id}`)
       .then((response) => {
         console.log('Exercise deleted:', response.data);
         this.setState({
