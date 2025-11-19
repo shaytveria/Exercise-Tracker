@@ -36,7 +36,7 @@ app.use(express.json());
 const uri = process.env.ATLAS_URI;
 if (!uri) {
   console.warn("WARNING: ATLAS_URI is not defined in .env file");
-} else {
+} else if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(uri)
     .then(() => console.log("MongoDB connected"))
     .catch(err => console.error("MongoDB connection error:", err.message));
@@ -50,6 +50,10 @@ app.use('/exercises', exercisesRouter);
 app.use('/users', usersRouter);
 
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.log(`Server is running on port: ${port}`);
+  });
+}
+
+module.exports = app;

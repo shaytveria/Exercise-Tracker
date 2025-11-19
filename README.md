@@ -6,6 +6,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+## Backend Tests
+
+To run the Express API test suite (Jest + Supertest):
+
+1. `cd backend`
+2. `npm install`
+3. `npm test`
+
 ### `npm start`
 
 Runs the app in the development mode.\
