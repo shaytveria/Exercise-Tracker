@@ -37,7 +37,7 @@ export default function CreateUser() {
 
     try {
       const user = { username };
-      const response = await axios.post(`${API_URL}/users/add`, user);
+      await axios.post(`${API_URL}/users/add`, user);
       setSuccess(`User "${username}" created successfully!`);
       setUsername('');
     } catch (err) {
