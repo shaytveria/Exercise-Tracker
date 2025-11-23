@@ -11,8 +11,14 @@ export default function CreateExercise() {
   const [date, setDate] = useState(new Date());
   const [users, setUsers] = useState([]);
   const [durationError, setDurationError] = useState('');
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [usersError, setUsersError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
+    setIsLoadingUsers(true);
+    setUsersError('');
     axios
       .get(`${API_URL}/users/`)
       .then((response) => {
@@ -20,10 +26,15 @@ export default function CreateExercise() {
           setUsers(response.data.map((user) => user.username));
           setUsername(response.data[0].username);
         } else {
-          console.log('No users found in the database.');
+          setUsersError('No users found. Please create a user first.');
         }
+        setIsLoadingUsers(false);
       })
-      .catch((error) => console.error('Error fetching users:', error));
+      .catch((error) => {
+        setUsersError('Failed to load users. Please refresh the page.');
+        setIsLoadingUsers(false);
+        console.error('Error fetching users:', error);
+      });
   }, []);
 
   const onChangeUsername = (e) => {
@@ -48,7 +59,7 @@ export default function CreateExercise() {
     setDate(date);
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     if (duration === '' || isNaN(duration) || Number(duration) <= 0) {
@@ -57,6 +68,8 @@ export default function CreateExercise() {
     }
 
     setDurationError('');
+    setSubmitError('');
+    setIsSubmitting(true);
 
     const exercise = {
       username,
@@ -65,15 +78,16 @@ export default function CreateExercise() {
       date,
     };
 
-    console.log(exercise);
-
-    axios
-      .post(`${API_URL}/exercises/add`, exercise)
-      .then((res) => {
-        console.log(res.data);
-        window.location = '/';
-      })
-      .catch((err) => console.error('Error adding exercise:', err));
+    try {
+      await axios.post(`${API_URL}/exercises/add`, exercise);
+      window.location = '/';
+    } catch (err) {
+      setSubmitError(
+        err.response?.data || 'Failed to create exercise. Please try again.'
+      );
+      setIsSubmitting(false);
+      console.error('Error adding exercise:', err);
+    }
   };
 
   return (
@@ -83,23 +97,38 @@ export default function CreateExercise() {
         <form onSubmit={onSubmit}>
           <div className="mb-3">
             <label className="form-label">Username:</label>
-            <select
-              required
-              className="form-select"
-              value={username}
-              onChange={onChangeUsername}
-            >
-              <option value="">Select user...</option>
-              {users.map((user) => (
-                <option key={user} value={user}>
-                  {user}
-                </option>
-              ))}
-            </select>
-            {users.length === 0 && (
-              <div className="form-text text-danger">
-                No users loaded. Make sure you created a user successfully.
+            {isLoadingUsers ? (
+              <div className="form-control">
+                <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                Loading users...
               </div>
+            ) : (
+              <>
+                <select
+                  required
+                  className={`form-select ${usersError ? 'is-invalid' : ''}`}
+                  value={username}
+                  onChange={onChangeUsername}
+                  disabled={users.length === 0 || isSubmitting}
+                >
+                  <option value="">Select user...</option>
+                  {users.map((user) => (
+                    <option key={user} value={user}>
+                      {user}
+                    </option>
+                  ))}
+                </select>
+                {usersError && (
+                  <div className="invalid-feedback" style={{ display: 'block' }}>
+                    {usersError}
+                  </div>
+                )}
+                {users.length === 0 && !usersError && (
+                  <div className="form-text text-danger">
+                    No users loaded. Make sure you created a user successfully.
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -140,9 +169,30 @@ export default function CreateExercise() {
             />
           </div>
 
+          {submitError && (
+            <div className="alert alert-danger mb-3" role="alert">
+              <strong>Error:</strong> {submitError}
+            </div>
+          )}
+
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
-              Create Exercise Log
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting || isLoadingUsers || users.length === 0}
+            >
+              {isSubmitting ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Creating...
+                </>
+              ) : (
+                'Create Exercise Log'
+              )}
             </button>
           </div>
         </form>
